@@ -1,0 +1,40 @@
+import speech_recognition as sr
+from gtts import gTTS
+import os
+
+# Ses tanıma işlemini gerçekleştiren fonksiyon
+def recognize_speech():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Dinleniyor...")
+        audio = recognizer.listen(source)
+
+    try:
+        text = recognizer.recognize_google(audio, language="tr-TR")
+        return text
+    except sr.UnknownValueError:
+        return "Anlaşılamadı"
+    except sr.RequestError:
+        return "İstek hatası"
+
+
+# Metni sese dönüştüren fonksiyon
+def text_to_speech(text, language="tr"):
+    tts = gTTS(text=text, lang=language)
+    tts.save("output.mp3")
+    os.system("mpg321 output.mp3")
+
+
+# Ana döngü
+while True:
+    print("Sorunu sorun veya 'Çıkış' deyin:")
+    input_text = recognize_speech()
+
+    if input_text.lower() == "çıkış":
+        break
+
+    # Gelen soruya göre yanıt üretme işlemleri burada yapılabilir
+    response_text = "Bu bir örnek yanıt"
+
+    # Yanıtı metinden sese dönüştürme
+    text_to_speech(response_text)
